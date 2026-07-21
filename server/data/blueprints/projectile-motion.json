@@ -1,0 +1,560 @@
+{
+  "title": "Projectile Motion",
+  "prerequisites": [
+    {
+      "id": "pq1",
+      "question": "A ball is launched at 20 m/s at 30° above the horizontal. What is the horizontal component of its velocity?",
+      "options": [
+        "20 m/s",
+        "10 m/s (20·sin30°)",
+        "17.3 m/s (20·cos30°)",
+        "6.7 m/s"
+      ],
+      "answer": "17.3 m/s (20·cos30°)",
+      "remediation": "The horizontal component of a velocity v at angle θ from the horizontal is v·cosθ = 20·cos30° ≈ 17.3 m/s."
+    },
+    {
+      "id": "pq2",
+      "question": "Which expression gives the vertical component of a velocity v launched at angle θ above the horizontal?",
+      "options": [
+        "v·cosθ",
+        "v·sinθ",
+        "v·tanθ",
+        "v/2"
+      ],
+      "answer": "v·sinθ",
+      "remediation": "Resolve the velocity vector: horizontal part is v·cosθ, vertical part is v·sinθ. The angle is measured from the horizontal."
+    },
+    {
+      "id": "pq3",
+      "question": "An object moves with constant horizontal velocity 5 m/s. How far does it travel horizontally in 4 seconds?",
+      "options": [
+        "9 m",
+        "20 m",
+        "1.25 m",
+        "5 m"
+      ],
+      "answer": "20 m",
+      "remediation": "Horizontal distance = velocity × time = 5 × 4 = 20 m. With no horizontal acceleration, horizontal speed stays constant."
+    }
+  ],
+  "beats": [
+    {
+      "title": "Launch it — watch the shape",
+      "goal": "See that projectile motion traces a symmetric parabolic arc and identify the apex and landing point.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Fire a cannonball"
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "pj1",
+          "v0": 25,
+          "deg": 50,
+          "g": 9.8,
+          "t": 0
+        },
+        {
+          "op": "say",
+          "text": "Here's a cannonball launched at 25 m/s and 50°. Let's watch its full flight.",
+          "sync": "pj1"
+        },
+        {
+          "op": "anim",
+          "id": "pj1",
+          "k": "t",
+          "to": 1,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "The highest point — the apex — happens halfway through the flight. It rises to about y = {{projApex(25,50,9.8)}} m.",
+          "sync": "pj1"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb1",
+          "tex": "\\text{Range} = {{projRange(25,50,9.8)}}\\ \\text{m}"
+        },
+        {
+          "op": "say",
+          "text": "The total horizontal range is about {{projRange(25,50,9.8)}} m. Notice the shape — symmetric, rising and falling in equal time.",
+          "sync": "lb1"
+        },
+        {
+          "op": "say",
+          "text": "Drag the angle slider. Before you do — what do you think happens to the range when you go above 45°?",
+          "sync": "pj1"
+        },
+        {
+          "op": "ctl",
+          "id": "pj1",
+          "k": "deg",
+          "kind": "slider",
+          "min": 10,
+          "max": 80,
+          "step": 1,
+          "label": "Angle"
+        }
+      ]
+    },
+    {
+      "title": "Split the motion — horizontal vs vertical",
+      "goal": "Understand that horizontal motion is constant-velocity and vertical motion is free-fall, and the two are independent.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Decompose the velocity"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "pj1"
+          ]
+        },
+        {
+          "op": "set",
+          "id": "pj1",
+          "k": "deg",
+          "v": 45
+        },
+        {
+          "op": "set",
+          "id": "pj1",
+          "k": "t",
+          "v": 0
+        },
+        {
+          "op": "anim",
+          "id": "pj1",
+          "k": "t",
+          "to": 1,
+          "dur": 3
+        },
+        {
+          "op": "add",
+          "c": "axes",
+          "id": "ax1",
+          "xmin": -2,
+          "xmax": 65,
+          "ymin": -2,
+          "ymax": 18,
+          "xl": "x (m)",
+          "yl": "y (m)"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "traj",
+          "on": "ax1",
+          "expr": "tan(45*pi/180)*x - (9.8/(2*(25*cos(45*pi/180))^2))*x^2",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "Let's put this on grid axes. The trajectory is a parabola: y depends on x squared.",
+          "sync": "traj"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "projpt",
+          "on": "ax1",
+          "x": 0,
+          "y": 0,
+          "label": "t=0",
+          "color": "green"
+        },
+        {
+          "op": "ctl",
+          "id": "projpt",
+          "k": "x",
+          "kind": "drag"
+        },
+        {
+          "op": "say",
+          "text": "Drag this point along the curve. The horizontal spacing between equal-time snapshots is even — constant horizontal velocity. The vertical gaps shrink then grow — that's gravity.",
+          "sync": "projpt"
+        },
+        {
+          "op": "add",
+          "c": "vector",
+          "id": "vecx",
+          "on": "ax1",
+          "x2": 17.7,
+          "y2": 0,
+          "label": "v_x",
+          "color": "green"
+        },
+        {
+          "op": "add",
+          "c": "vector",
+          "id": "vecy",
+          "on": "ax1",
+          "x2": 17.7,
+          "y2": 17.7,
+          "x1": 17.7,
+          "y1": 0,
+          "label": "v_y",
+          "color": "red"
+        },
+        {
+          "op": "say",
+          "text": "Green = the constant horizontal component v·cos45°. Red = the vertical component v·sin45° — it shrinks to zero at the top, then grows downward. The two act independently!",
+          "sync": "vecx"
+        }
+      ]
+    },
+    {
+      "title": "The time equation — when does it land?",
+      "goal": "Derive the time of flight from the vertical motion alone, connecting it to the symmetric parabola.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Time of flight"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1",
+            "traj"
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Now think about just the vertical motion: y(t) = (v0 sin θ) t − ½ g t². With v0 = 25 and θ = 45°, the initial vertical speed is {{25*sin(45*pi/180)}} m/s.",
+          "sync": "traj"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb2",
+          "tex": "y(t) = v_0 \\sin\\theta\\, t - \\tfrac12 g t^2",
+          "on": "ax1",
+          "x": 35,
+          "y": 16
+        },
+        {
+          "op": "say",
+          "text": "Set y = 0 (apart from t = 0) to find the landing time: t_flight = 2 v0 sin θ / g = {{projTime(25,45,9.8)}} s.",
+          "sync": "lb2"
+        },
+        {
+          "op": "add",
+          "c": "segment",
+          "id": "seg1",
+          "on": "ax1",
+          "x1": 0,
+          "y1": 0,
+          "x2": 63.8,
+          "y2": 0,
+          "dash": true
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "landpt",
+          "on": "ax1",
+          "x": 63.8,
+          "y": 0,
+          "label": "landing",
+          "color": "orange"
+        },
+        {
+          "op": "say",
+          "text": "So the flight lasts {{projTime(25,45,9.8)}} s, and the range is horizontal speed × time = {{25*cos(45*pi/180)}} × {{projTime(25,45,9.8)}} ≈ {{projRange(25,45,9.8)}} m.",
+          "sync": "landpt"
+        }
+      ],
+      "check": {
+        "text": "If you double the launch speed (keeping the same angle), what happens to the time of flight?",
+        "options": [
+          "It doubles",
+          "It quadruples",
+          "It stays the same",
+          "It is cut in half"
+        ],
+        "answer": "It doubles"
+      }
+    },
+    {
+      "title": "The range formula and the 45° rule",
+      "goal": "Discover that range depends on sin(2θ) and is maximized at 45°, then test it with the slider.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Range vs angle"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "traj30",
+          "on": "ax1",
+          "expr": "tan(30*pi/180)*x - (9.8/(2*(25*cos(30*pi/180))^2))*x^2",
+          "color": "blue"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "traj45",
+          "on": "ax1",
+          "expr": "tan(45*pi/180)*x - (9.8/(2*(25*cos(45*pi/180))^2))*x^2",
+          "color": "green"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "traj60",
+          "on": "ax1",
+          "expr": "tan(60*pi/180)*x - (9.8/(2*(25*cos(60*pi/180))^2))*x^2",
+          "color": "purple"
+        },
+        {
+          "op": "say",
+          "text": "Three launches at the same speed (25 m/s): 30° (blue), 45° (green), 60° (purple). Which one goes farthest?",
+          "sync": "traj45"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb3",
+          "tex": "R = \\frac{v_0^2 \\sin(2\\theta)}{g}",
+          "on": "ax1",
+          "x": 40,
+          "y": 16
+        },
+        {
+          "op": "say",
+          "text": "The range formula is R = v0² sin(2θ) / g. sin(2θ) peaks at 1 when 2θ = 90°, so θ = 45° gives the maximum range. Green wins!",
+          "sync": "lb3"
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "pj2",
+          "v0": 25,
+          "deg": 45,
+          "g": 9.8,
+          "t": 0
+        },
+        {
+          "op": "ctl",
+          "id": "pj2",
+          "k": "deg",
+          "kind": "slider",
+          "min": 15,
+          "max": 75,
+          "step": 1,
+          "label": "angle"
+        },
+        {
+          "op": "anim",
+          "id": "pj2",
+          "k": "t",
+          "to": 1,
+          "dur": 2
+        },
+        {
+          "op": "say",
+          "text": "Slide the angle and watch. At 45° the ball lands at {{projRange(25,45,9.8)}} m — the farthest. Any angle steeper or shallower falls short.",
+          "sync": "pj2"
+        }
+      ]
+    },
+    {
+      "title": "Uneven ground — launching from a height",
+      "goal": "Extend to projectiles launched above the landing level and see how the flight becomes asymmetric.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Launch from a cliff"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "axes",
+          "id": "ax2",
+          "xmin": -5,
+          "xmax": 85,
+          "ymin": -45,
+          "ymax": 25,
+          "xl": "x (m)",
+          "yl": "y (m)"
+        },
+        {
+          "op": "add",
+          "c": "segment",
+          "id": "cliff",
+          "on": "ax2",
+          "x1": -5,
+          "y1": 20,
+          "x2": 0,
+          "y2": 20,
+          "dash": false
+        },
+        {
+          "op": "add",
+          "c": "segment",
+          "id": "cliffv",
+          "on": "ax2",
+          "x1": 0,
+          "y1": 0,
+          "x2": 0,
+          "y2": 20,
+          "dash": false
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lbcliff",
+          "tex": "\\text{cliff } h = 20\\,\\text{m}",
+          "on": "ax2",
+          "x": -4,
+          "y": 22
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "trajcliff",
+          "on": "ax2",
+          "expr": "20 + tan(40*pi/180)*x - (9.8/(2*(25*cos(40*pi/180))^2))*x^2",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "Now the cannon sits on a 20 m cliff. The ball starts at y = 20 and lands at y = 0 — below its launch height.",
+          "sync": "trajcliff"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "launchpt",
+          "on": "ax2",
+          "x": 0,
+          "y": 20,
+          "label": "launch",
+          "color": "green"
+        },
+        {
+          "op": "say",
+          "text": "The flight is no longer symmetric — it travels farther going down than it rose going up. The vertical equation now carries a constant starting height h.",
+          "sync": "launchpt"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lbcliffeq",
+          "tex": "0 = h + (v_0\\sin\\theta)t - \\tfrac12 g t^2",
+          "on": "ax2",
+          "x": 42,
+          "y": 22
+        },
+        {
+          "op": "say",
+          "text": "Solve that quadratic in t. The positive root gives the longer flight time — and therefore a longer range than on flat ground.",
+          "sync": "lbcliffeq"
+        }
+      ],
+      "check": {
+        "text": "Launching from a cliff, is the total flight time longer or shorter than from flat ground with the same v0 and angle?",
+        "options": [
+          "longer",
+          "shorter",
+          "the same"
+        ],
+        "answer": "longer"
+      }
+    },
+    {
+      "title": "Putting it all together — design a shot",
+      "goal": "Synthesize angle, speed, and height to hit a target using everything covered.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Hit the target"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax2",
+            "cliff",
+            "cliffv",
+            "launchpt"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "target",
+          "on": "ax2",
+          "x": 55,
+          "y": 0,
+          "label": "target",
+          "color": "red"
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "pj3",
+          "v0": 25,
+          "deg": 35,
+          "g": 9.8,
+          "t": 0
+        },
+        {
+          "op": "say",
+          "text": "Your mission: hit the target at x = 55 m, launched from this 20 m cliff. Adjust speed and angle.",
+          "sync": "target"
+        },
+        {
+          "op": "anim",
+          "id": "pj3",
+          "k": "t",
+          "to": 1,
+          "dur": 3
+        },
+        {
+          "op": "ctl",
+          "id": "pj3",
+          "k": "deg",
+          "kind": "slider",
+          "min": 5,
+          "max": 80,
+          "step": 1,
+          "label": "angle"
+        },
+        {
+          "op": "ctl",
+          "id": "pj3",
+          "k": "v0",
+          "kind": "slider",
+          "min": 10,
+          "max": 45,
+          "step": 1,
+          "label": "speed"
+        },
+        {
+          "op": "say",
+          "text": "Start from the guess and adjust. Remember: horizontal range = v0 cos θ × t_flight, and t_flight comes from solving the vertical quadratic with h = 20 m.",
+          "sync": "pj3"
+        }
+      ],
+      "check": {
+        "text": "In one sentence: when launching from a height, how does increasing the launch angle affect the flight time?",
+        "answer": "A larger launch angle increases the flight time, because more of the initial speed goes into vertical motion."
+      }
+    }
+  ]
+}

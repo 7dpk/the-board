@@ -1,0 +1,822 @@
+{
+  "title": "Kepler's Laws and Gravitation",
+  "prerequisites": [
+    {
+      "id": "pq1",
+      "question": "In physics, a force is best described as:",
+      "options": [
+        "a push or a pull that can change an object's motion",
+        "the speed at which an object is moving",
+        "the amount of matter an object contains",
+        "the energy stored inside a moving object"
+      ],
+      "answer": "a push or a pull that can change an object's motion",
+      "remediation": "A force is a push or pull. A NET force changes an object's velocity (Newton's second law, F = ma); with no net force, motion just continues unchanged. Today, gravity is the force doing all the pushing and pulling."
+    },
+    {
+      "id": "pq2",
+      "question": "You whirl a ball on a string in a circle at steady speed. To keep it circling, your hand must pull the string:",
+      "options": [
+        "inward, toward the center of the circle",
+        "outward, away from the center",
+        "forward, in the direction the ball is moving",
+        "no pull is needed once the ball is moving"
+      ],
+      "answer": "inward, toward the center of the circle",
+      "remediation": "Circular motion needs a constant inward (centripetal) pull. Cut the string and the ball flies off in a straight line. In an orbit, gravity is that inward pull — always aimed at the central body."
+    },
+    {
+      "id": "pq3",
+      "question": "A data table shows that when x doubles, y grows to MORE than double. This tells you y rises:",
+      "options": [
+        "faster than in direct proportion to x",
+        "in exact direct proportion to x",
+        "more slowly than x",
+        "not at all as x changes"
+      ],
+      "answer": "faster than in direct proportion to x",
+      "remediation": "If y more than doubles when x doubles, y climbs faster than proportionally — a power law y proportional to x^p with p > 1. Reading a table for exactly this kind of pattern is how Kepler cracked his Third Law."
+    }
+  ],
+  "beats": [
+    {
+      "title": "Why doesn't the Moon fall down?",
+      "goal": "Hook with the apple-and-Moon insight. A thrown ball arcs back to Earth — everything falls. Then confront the student: the Moon feels that same gravity, so why doesn't it crash down? Pose the mystery, no laws yet.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Why doesn't the Moon fall down?"
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "p1",
+          "v0": 16,
+          "deg": 60
+        },
+        {
+          "op": "say",
+          "text": "Toss a ball into the air and it arcs straight back to the ground. On Earth, everything falls.",
+          "sync": "p1"
+        },
+        {
+          "op": "anim",
+          "id": "p1",
+          "k": "t",
+          "to": 1,
+          "dur": 4,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Gravity won; the ball landed. Now look up at the Moon — the very same gravity reaches all the way out and pulls on it too.",
+          "sync": "p1"
+        },
+        {
+          "op": "say",
+          "text": "So here is Newton's wild question: if gravity tugs the Moon exactly as it tugged your ball, why doesn't the Moon come crashing down on us? Hold that thought."
+        }
+      ]
+    },
+    {
+      "title": "Falling sideways: the first orbit",
+      "goal": "Newton's cannonball. Fire a projectile flatter and faster; the faster it goes the farther it falls before landing — until, at orbital speed, the ground curves away as fast as it drops and it never lands. An orbit is perpetual falling.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Falling sideways: the first orbit"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "p2",
+          "v0": 25,
+          "deg": 5
+        },
+        {
+          "op": "say",
+          "text": "Newton pictured a cannon on an impossibly tall mountain, firing flat. Fire harder, and the ball lands farther away.",
+          "sync": "p2"
+        },
+        {
+          "op": "anim",
+          "id": "p2",
+          "k": "v0",
+          "to": 100,
+          "dur": 5,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Faster still, and the Earth curves away beneath the ball as fast as it falls — so it keeps missing the ground. That is an orbit: perpetual falling.",
+          "sync": "p2"
+        },
+        {
+          "op": "ctl",
+          "id": "p2",
+          "k": "v0",
+          "kind": "slider",
+          "min": 20,
+          "max": 100,
+          "step": 1,
+          "label": "launch speed v0"
+        },
+        {
+          "op": "say",
+          "text": "For Earth that magic speed is about {{round(sqrt(3.986e14/6.371e6)/1e2)/10}} km every second. Predict before you slide: fire even faster than that — does the ball fall back, circle forever, or fly off and escape?"
+        }
+      ],
+      "check": {
+        "text": "Newton imagined firing a cannonball ever faster from a mountaintop. At orbital speed, the cannonball:",
+        "options": [
+          "keeps falling toward Earth but moves sideways so fast it never lands",
+          "stops feeling gravity once it is fast enough",
+          "travels in a perfectly straight line forever",
+          "needs a rocket engine burning constantly to stay up"
+        ],
+        "answer": "keeps falling toward Earth but moves sideways so fast it never lands"
+      }
+    },
+    {
+      "title": "Circles first: which way does the force point?",
+      "goal": "Start with the simplest orbit — a perfect circle. The velocity points along the path (tangent), but the force that bends it must point inward, to the center. Confront the direction-of-force misconception head on with a free-body diagram beside the circle.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Circles first: which way does the force point?"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orbc",
+          "a": 45,
+          "e": 0,
+          "showVectors": true,
+          "centerLabel": "Sun",
+          "bodyLabel": "planet"
+        },
+        {
+          "op": "say",
+          "text": "Begin with the simplest orbit — a perfect circle. The green velocity arrow always points along the path, sideways, never at the Sun.",
+          "sync": "orbc"
+        },
+        {
+          "op": "say",
+          "text": "Predict before you look: the single force acting on this planet — which way does it point? Forward along its motion, or somewhere else?"
+        },
+        {
+          "op": "add",
+          "c": "fbd",
+          "id": "fbc",
+          "label": "planet",
+          "forces": [
+            {
+              "name": "F_g",
+              "deg": 180,
+              "mag": 45
+            }
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Here is your answer: gravity points neither forward nor back, but straight inward — toward the Sun at the center.",
+          "sync": "fbc"
+        },
+        {
+          "op": "say",
+          "text": "That inward pull never speeds the planet up or slows it down; it only bends its straight-line path into a circle. That is what 'centripetal' means: center-seeking."
+        }
+      ],
+      "check": {
+        "text": "For a planet in a circular orbit, the net force on it points:",
+        "options": [
+          "toward the Sun, at the center of the circle",
+          "forward, in the direction the planet is moving",
+          "outward, away from the Sun",
+          "nowhere — there is no net force if the speed is constant"
+        ],
+        "answer": "toward the Sun, at the center of the circle"
+      }
+    },
+    {
+      "title": "The data rebels: a war on Mars",
+      "goal": "Tension beat. For 2000 years orbits HAD to be circles. Kepler began there too, armed with Tycho Brahe's superb data — but Mars refused to fit any circle, missing by a stubborn 8 arcminutes. Kepler trusted the data over the beautiful circle. Light on visuals, heavy on drama.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "The data rebels: a war on Mars"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orbd",
+          "a": 45,
+          "e": 0,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "Mars"
+        },
+        {
+          "op": "say",
+          "text": "For two thousand years, orbits HAD to be perfect circles — the ideal shape of the heavens. Kepler started there too, armed with twenty years of Tycho Brahe's superb naked-eye measurements.",
+          "sync": "orbd"
+        },
+        {
+          "op": "say",
+          "text": "Now make the call before he did: when his best circle clashed with Tycho's Mars, which should Kepler have trusted — the beautiful theory, or the stubborn data?"
+        },
+        {
+          "op": "set",
+          "id": "orbd",
+          "k": "e",
+          "v": 0.09,
+          "dur": 2.5
+        },
+        {
+          "op": "say",
+          "text": "He trusted the data. His best circle missed Tycho's Mars by a stubborn 8 arcminutes — a quarter the width of the full Moon.",
+          "sync": "orbd"
+        },
+        {
+          "op": "say",
+          "text": "So he threw out the sacred circle and asked a heretical question: then what shape IS it?"
+        }
+      ],
+      "check": {
+        "text": "Why did Kepler finally abandon circular orbits?",
+        "options": [
+          "Tycho's precise data disagreed with every circle by a small but stubborn 8 arcminutes",
+          "circles were mathematically too difficult to compute",
+          "the telescope had not been invented, so he was only guessing",
+          "he preferred ellipses for religious reasons"
+        ],
+        "answer": "Tycho's precise data disagreed with every circle by a small but stubborn 8 arcminutes"
+      }
+    },
+    {
+      "title": "First Law: the shape of an orbit",
+      "goal": "Kepler's answer: the ellipse, with the Sun at one focus — never the center. Eccentricity sets the stretch. Let the student predict where the Sun's focus goes as e grows, then test with the slider.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "First Law: orbits are ellipses"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb1",
+          "a": 45,
+          "e": 0.6,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "planet"
+        },
+        {
+          "op": "say",
+          "text": "The shape that fit was an ellipse — a stretched circle — with the Sun sitting at one focus, off to one side, never at the center.",
+          "sync": "orb1"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb1",
+          "tex": "\\text{Sun at one focus}"
+        },
+        {
+          "op": "say",
+          "text": "Eccentricity e measures the stretch: e = 0 is a perfect circle, and the larger e grows, the more elongated the orbit becomes.",
+          "sync": "orb1"
+        },
+        {
+          "op": "ctl",
+          "id": "orb1",
+          "k": "e",
+          "kind": "slider",
+          "min": 0,
+          "max": 0.9,
+          "step": 0.01,
+          "label": "eccentricity e"
+        },
+        {
+          "op": "say",
+          "text": "Predict before you slide: as you push e toward 0.9, does the Sun's focus drift toward the center, or out toward the edge?"
+        }
+      ],
+      "check": {
+        "text": "In an elliptical orbit, where is the Sun located?",
+        "options": [
+          "at one focus, off to one side",
+          "at the exact geometric center of the ellipse",
+          "out at the far edge of the ellipse",
+          "at both foci at the same time"
+        ],
+        "answer": "at one focus, off to one side"
+      }
+    },
+    {
+      "title": "Second Law: equal areas in equal times",
+      "goal": "Resolve the hook's speed puzzle. The Sun-planet line sweeps equal areas in equal times, so the planet MUST race when close and crawl when far. Show the gold wedge gliding round the orbit, then let the student scrub it and predict where speed peaks.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Second Law: equal areas, unequal speeds"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb2",
+          "a": 45,
+          "e": 0.6,
+          "t": 0.06,
+          "showVectors": true,
+          "showSweep": true,
+          "centerLabel": "Sun",
+          "bodyLabel": "planet"
+        },
+        {
+          "op": "say",
+          "text": "The gold wedge is the area the Sun-planet line sweeps out in one fixed slice of time. Watch it travel all the way around.",
+          "sync": "orb2"
+        },
+        {
+          "op": "anim",
+          "id": "orb2",
+          "k": "t",
+          "to": 1,
+          "dur": 10,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Near the Sun the wedge is short and fat; far out it is long and thin — yet the area is always identical. Equal areas, equal times.",
+          "sync": "orb2"
+        },
+        {
+          "op": "ctl",
+          "id": "orb2",
+          "k": "t",
+          "kind": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "label": "orbit position t"
+        },
+        {
+          "op": "say",
+          "text": "Scrub t yourself and compare the wedge at the near point with the far point. Where must the planet race fastest to keep each wedge equal?"
+        }
+      ],
+      "check": {
+        "text": "Kepler's Second Law (equal areas in equal times) means a planet moves:",
+        "options": [
+          "fastest when closest to the Sun",
+          "fastest when farthest from the Sun",
+          "at exactly the same speed all the way around",
+          "fastest exactly halfway between closest and farthest"
+        ],
+        "answer": "fastest when closest to the Sun"
+      }
+    },
+    {
+      "title": "Third Law: the harmony of the worlds",
+      "goal": "Kepler's Third Law from the real solar system. Show measured a and T for Mercury through Mars, spot that bigger orbits take disproportionately longer years, then derive T = a^(3/2) in solar units and check it against Mars's measured year with the verified kepler3 fact.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Third Law: T squared tracks a cubed"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tbk",
+          "cols": [
+            "Planet",
+            "a (AU)",
+            "T (yr)"
+          ],
+          "rows": [
+            [
+              "Mercury",
+              "0.387",
+              "0.24"
+            ],
+            [
+              "Venus",
+              "0.723",
+              "0.62"
+            ],
+            [
+              "Earth",
+              "1.000",
+              "1.00"
+            ],
+            [
+              "Mars",
+              "1.524",
+              "1.88"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Here is the real data Kepler pored over for years — each planet's orbit size a and its year T. Notice: as a grows, T grows even faster.",
+          "sync": "tbk"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st1",
+          "title": "Spot the pattern: T squared vs a cubed",
+          "lines": [
+            "T^2 \\;\\propto\\; a^3",
+            "\\dfrac{T}{1\\,\\text{yr}} = \\left(\\dfrac{a}{1\\,\\text{AU}}\\right)^{3/2}",
+            "\\text{Mars: } T = (1.524)^{3/2} = {{kepler3(1,1,1.524)}}\\,\\text{yr}",
+            "\\text{measured } T = 1.88\\,\\text{yr}\\;\\checkmark"
+          ],
+          "notes": [
+            "period squared is proportional to axis cubed",
+            "for the same Sun, take the year in Earth-units",
+            "raise Mars's a = 1.524 AU to the three-halves power",
+            "the law nails Tycho's measured Martian year"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Test it on Mars: raising a = 1.524 AU to the three-halves power predicts a year of {{kepler3(1,1,1.524)}} Earth-years.",
+          "sync": "st1"
+        },
+        {
+          "op": "anim",
+          "id": "st1",
+          "k": "shown",
+          "to": 4,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "And the sky agrees — Mars really takes 1.88 years. Every planet obeys it: T squared tracks a cubed. Now predict a comet at a = 9 AU: how long is its year?",
+          "sync": "st1"
+        }
+      ],
+      "check": {
+        "text": "A comet orbits the same Sun with semi-major axis a = 9 AU. Using T squared proportional to a cubed, its orbital period is:",
+        "options": [
+          "{{kepler3(1,1,9)}} years",
+          "9 years",
+          "18 years",
+          "81 years"
+        ],
+        "answer": "{{kepler3(1,1,9)}} years"
+      }
+    },
+    {
+      "title": "Newton: the one force behind it all",
+      "goal": "Reveal the engine. Newton's inverse-square gravity IS the centripetal force an orbit needs. Set them equal, substitute the orbital speed, and out drops T squared proportional to r cubed — with the planet's own mass cancelling. Newton doesn't fit Kepler; he explains him.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Newton: gravity is the centripetal force"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "fbd",
+          "id": "fbn",
+          "label": "planet",
+          "forces": [
+            {
+              "name": "F_g",
+              "deg": 180,
+              "mag": 45
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb5",
+          "tex": "F = G\\dfrac{Mm}{r^2}"
+        },
+        {
+          "op": "say",
+          "text": "Here is Newton's law: every mass pulls every other with a force that fades as 1 over r squared — and for a planet, that inward pull IS the centripetal force you need.",
+          "sync": "fbn"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st2",
+          "title": "Gravity gives you Kepler's Third Law",
+          "lines": [
+            "G\\dfrac{Mm}{r^2} = \\dfrac{m v^2}{r}",
+            "v = \\dfrac{2\\pi r}{T}",
+            "G\\dfrac{M}{r^2} = \\dfrac{4\\pi^2 r}{T^2}",
+            "T^2 = \\dfrac{4\\pi^2}{GM}\\,r^3"
+          ],
+          "notes": [
+            "gravity supplies the centripetal force m v squared over r",
+            "orbital speed is one circumference per period",
+            "substitute v, and the planet's mass m cancels off both sides",
+            "T squared is proportional to r cubed — Kepler's Third Law, constant revealed"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Before we substitute the orbital speed, make the call: when you set gravity equal to the centripetal force, does the planet's own mass m cancel out — or survive into the answer?",
+          "sync": "st2"
+        },
+        {
+          "op": "anim",
+          "id": "st2",
+          "k": "shown",
+          "to": 4,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "Watch it happen: m sits on both sides and cancels, which is exactly why every planet obeys the same law whatever its size. You are left with T squared = (4 pi squared / GM) r cubed, its constant pinned to the Sun's mass.",
+          "sync": "st2"
+        }
+      ],
+      "check": {
+        "text": "In this derivation, why does the planet's own mass m disappear from the final result?",
+        "options": [
+          "it appears on both the gravity side and the centripetal side, so it cancels",
+          "we assumed the planet is massless",
+          "Newton measured it to be exactly zero",
+          "it was never written into the equations"
+        ],
+        "answer": "it appears on both the gravity side and the centripetal side, so it cancels"
+      }
+    },
+    {
+      "title": "Weighing the Sun without leaving home",
+      "goal": "The power beat. Run Newton's law backwards: from Earth's orbit radius and year alone, solve for the Sun's mass. Every input is measurable from Earth, the planet's mass cancels, and the board computes M_sun to the accepted value. Pure leverage.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Weighing the Sun without leaving home"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st3",
+          "title": "The Sun's mass from Earth's orbit alone",
+          "lines": [
+            "M = \\dfrac{4\\pi^2 r^3}{G\\,T^2}",
+            "r = 1.496\\times10^{11}\\,\\text{m},\\quad T = 3.156\\times10^{7}\\,\\text{s}",
+            "M = \\dfrac{4\\pi^2\\,(1.496\\times10^{11})^3}{(6.674\\times10^{-11})\\,(3.156\\times10^{7})^2}",
+            "M \\approx {{4*pi^2*(1.496e11)^3/(6.674e-11*(3.156e7)^2*1e30)}}\\times10^{30}\\,\\text{kg}"
+          ],
+          "notes": [
+            "rearrange Newton's law to solve for the central mass M",
+            "plug in Earth's orbit radius and its year in seconds",
+            "every quantity here is measured from Earth — none from the Sun",
+            "the Sun weighs about two thousand trillion trillion tonnes"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Now flip the very same equation around: from Earth's orbit radius r and its year T alone, you can solve for the Sun's mass M.",
+          "sync": "st3"
+        },
+        {
+          "op": "say",
+          "text": "Every number you plug in — r, T, and G — you measured from right here on Earth. Before the board evaluates it, take a guess: will the Sun's mass land bigger or smaller than 10 to the 30 kilograms?",
+          "sync": "st3"
+        },
+        {
+          "op": "anim",
+          "id": "st3",
+          "k": "shown",
+          "to": 4,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "You just weighed the Sun without leaving home: {{4*pi^2*(1.496e11)^3/(6.674e-11*(3.156e7)^2*1e30)}} times ten-to-the-thirty kilograms — and the accepted value is 1.989. Nailed it.",
+          "sync": "st3"
+        }
+      ],
+      "check": {
+        "text": "We computed the Sun's mass from Earth's orbit alone. What made that possible?",
+        "options": [
+          "the planet's mass cancels, so the period and radius alone fix the central mass M",
+          "we first had to weigh the Earth",
+          "the Sun's mass was already hidden inside the constant G",
+          "we needed to measure the Sun's temperature and size"
+        ],
+        "answer": "the planet's mass cancels, so the period and radius alone fix the central mass M"
+      }
+    },
+    {
+      "title": "Parking a satellite: geostationary orbit",
+      "goal": "Apply the machinery to modern life. A geostationary satellite must circle once per Earth spin; that single period, fed through Kepler's Third Law, fixes its altitude uniquely. Compute the real radius and height every TV satellite sits at.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Parking a satellite: geostationary orbit"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orbg",
+          "a": 60,
+          "e": 0,
+          "showVectors": false,
+          "centerLabel": "Earth",
+          "bodyLabel": "satellite"
+        },
+        {
+          "op": "say",
+          "text": "A geostationary satellite has to hang fixed over one spot on the equator — so you must give it an orbital period that exactly matches Earth's spin.",
+          "sync": "orbg"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st4",
+          "title": "How high must it orbit?",
+          "lines": [
+            "T = 86164\\,\\text{s}\\;\\;(\\text{one Earth spin})",
+            "r = \\left(\\dfrac{GM\\,T^2}{4\\pi^2}\\right)^{1/3}",
+            "r \\approx {{round((3.986e14*86164^2/(4*pi^2))^(1/3)/1e3)}}\\,\\text{km from Earth's center}",
+            "\\text{altitude} \\approx {{round(((3.986e14*86164^2/(4*pi^2))^(1/3)-6.378e6)/1e3)}}\\,\\text{km up}"
+          ],
+          "notes": [
+            "match Earth's true spin — one sidereal day",
+            "Kepler's Third Law, rearranged to solve for the radius",
+            "that one period fixes the radius uniquely",
+            "subtract Earth's radius to get the height above the ground"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Predict before the math runs: to keep pace with Earth's spin, will the satellite have to sit higher or lower than the Moon's orbit?",
+          "sync": "st4"
+        },
+        {
+          "op": "anim",
+          "id": "st4",
+          "k": "shown",
+          "to": 4,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "Fix the period to one day and Kepler's Third Law nails the radius at {{round((3.986e14*86164^2/(4*pi^2))^(1/3)/1e3)}} km — far below the Moon. So every TV and weather satellite you use sits {{round(((3.986e14*86164^2/(4*pi^2))^(1/3)-6.378e6)/1e3)}} km overhead, one altitude forced by one law.",
+          "sync": "st4"
+        }
+      ],
+      "check": {
+        "text": "To stay fixed above one spot on the equator, a satellite's orbital period must equal one Earth day. What does that requirement do to its altitude?",
+        "options": [
+          "it fixes the altitude uniquely, at about {{round(((3.986e14*86164^2/(4*pi^2))^(1/3)-6.378e6)/1e6)*1e3}} km",
+          "the altitude is free — you can park it at any height",
+          "it must orbit as low as possible, just above the atmosphere",
+          "the altitude depends on the satellite's mass"
+        ],
+        "answer": "it fixes the altitude uniquely, at about {{round(((3.986e14*86164^2/(4*pi^2))^(1/3)-6.378e6)/1e6)*1e3}} km"
+      }
+    },
+    {
+      "title": "One law, the whole sky",
+      "goal": "Synthesis. Put all three laws in one moving picture and name the single cause beneath them — Newton's inverse-square gravity. Tease the transfer orbit that carries spacecraft between planets, and test the big-picture unification.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "One law, the whole sky"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb5",
+          "a": 50,
+          "e": 0.5,
+          "t": 0.06,
+          "showVectors": true,
+          "showSweep": true,
+          "centerLabel": "Sun",
+          "bodyLabel": "planet"
+        },
+        {
+          "op": "say",
+          "text": "One picture, three laws: an ellipse with the Sun at a focus (First), a gold equal-area wedge sweeping round (Second), sized so T squared tracks a cubed (Third).",
+          "sync": "orb5"
+        },
+        {
+          "op": "anim",
+          "id": "orb5",
+          "k": "t",
+          "to": 1,
+          "dur": 9,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "And beneath all three lies one single cause — Newton's 1 over r squared gravity, forever aimed at the Sun.",
+          "sync": "orb5"
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tbl",
+          "cols": [
+            "Law",
+            "What it says"
+          ],
+          "rows": [
+            [
+              "First",
+              "orbit is an ellipse, Sun at one focus"
+            ],
+            [
+              "Second",
+              "equal areas in equal times — fastest when nearest"
+            ],
+            [
+              "Third",
+              "T squared is proportional to a cubed"
+            ],
+            [
+              "Newton",
+              "gravity F = GMm/r squared causes all of it"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Same law everywhere: it holds moons and satellites, and — with a gentle nudge between two ellipses — carves the transfer orbit that flings a spacecraft from Earth to Mars.",
+          "sync": "tbl"
+        },
+        {
+          "op": "ctl",
+          "id": "orb5",
+          "k": "e",
+          "kind": "slider",
+          "min": 0,
+          "max": 0.9,
+          "step": 0.01,
+          "label": "eccentricity e"
+        },
+        {
+          "op": "say",
+          "text": "Replay any orbit you like with the slider — from a near-circle to a wild comet, every shape still obeys all four rules at once."
+        }
+      ],
+      "check": {
+        "text": "Which single physical law, applied to orbits, produces ALL THREE of Kepler's laws?",
+        "options": [
+          "Newton's law of universal gravitation (the inverse-square law)",
+          "conservation of mass",
+          "the ideal gas law",
+          "Hooke's law for springs"
+        ],
+        "answer": "Newton's law of universal gravitation (the inverse-square law)"
+      }
+    }
+  ]
+}

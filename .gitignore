@@ -1,0 +1,20 @@
+node_modules/
+dist/
+# Build output only — generated at build time by scripts/build-api.mjs
+# (pre-bundles server/src/vercel-entry.ts into api/index.mjs so Vercel's
+# function entry has no workspace-symlinked .ts imports left to compile).
+/api/
+.env
+.env.*
+!.env.example
+*.local
+.DS_Store
+.superpowers/
+worktrees/
+server/eval-results.json
+server/data/component-wishes.jsonl
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.vercel

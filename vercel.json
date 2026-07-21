@@ -1,0 +1,17 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "node scripts/build-api.mjs && npm run build -w client",
+  "outputDirectory": "client/dist",
+  "framework": null,
+  "functions": {
+    "api/index.mjs": {
+      "maxDuration": 300,
+      "includeFiles": "server/data/blueprints/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "regions": ["bom1"]
+}

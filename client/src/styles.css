@@ -1,0 +1,1417 @@
+/* =========================================================================
+   BOARD — "Lamplight" visual system (design pass)
+   An evening study-desk aesthetic: deep warm-dark surfaces, one confident
+   gold accent (the lamp), a display/body/mono type trio, and a faint
+   graph-paper motif that carries the whiteboard identity. Chart series
+   colours live in board/math.tsx (COLORS) and are validated separately.
+   ========================================================================= */
+
+:root {
+  /* --- Surfaces: warm-dark, three raised levels over the page plane --- */
+  --bg: #14120f;          /* page plane (deepest) — behind everything */
+  --surface-1: #1c1915;   /* cards, board blocks, Mafs canvas, panels — the
+                             surface the series palette is validated against */
+  --surface-2: #24201a;   /* raised: inputs, chips, quiet buttons */
+  --surface-3: #302a20;   /* highest: hover/active raised */
+
+  /* Hairlines — warm, translucent so they read as edges not lines */
+  --hairline: rgba(255, 240, 214, 0.08);
+  --hairline-strong: rgba(255, 240, 214, 0.16);
+  /* Graph-paper ink for the board gutter motif — barely there on purpose */
+  --grid-ink: rgba(255, 240, 214, 0.028);
+
+  /* --- Ink: warm paper whites, three weights --- */
+  --ink: #f2ede3;         /* primary text */
+  --ink-muted: #b0a892;   /* secondary: captions, axis labels, meta */
+  --ink-faint: #8a8171;   /* tertiary: placeholders, empty states, hints */
+
+  /* --- Accent: the lamplight. One confident gold for interactive chrome.
+     Kept BRIGHTER than the series `gold` mark (which sits in the validated
+     dark band) — chrome may glow, data marks may not. --- */
+  --accent: #ffce5c;
+  --accent-deep: #eab445;     /* hover/pressed */
+  --accent-ink: #1a1408;      /* text/glyphs on an accent fill */
+  --accent-glow: rgba(255, 206, 92, 0.16);
+
+  /* Legacy token kept for any un-migrated reference; repointed to a soft
+     study-lamp blue. */
+  --teacher: #6f97d6;
+  --student-bubble: #f0e6cf;  /* warm paper for the student's chat bubble */
+  --error: #ef6f6f;
+
+  /* --- Typography --- */
+  --font-display: 'Bricolage Grotesque Variable', 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans Variable', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* --- Spacing rhythm (4px base) --- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+
+  /* --- Radii --- */
+  --radius-sm: 7px;
+  --radius: 11px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* --- Motion --- */
+  --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin: 0;
+}
+
+/* One consistent, accessible focus ring for every interactive control. */
+:where(button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Shared field look (inputs / selects / textareas across the app chrome). */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 8px 11px;
+  transition: border-color 0.16s var(--ease-soft), background 0.16s var(--ease-soft);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ink-faint);
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: var(--hairline-strong);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  outline: none;
+  background: var(--surface-3);
+}
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+.app-shell {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  /* Without this, a grid item's automatic minimum size is its content size
+     (see .chat/.board-wrap below) — a tall chat log or a long lesson would
+     grow this row past the viewport instead of scrolling internally, and the
+     *page* would scroll instead. min-height:0 lets the row stay pinned at the
+     remaining viewport height so .board-wrap / .chat-log's own overflow:auto
+     is what actually scrolls. */
+  min-height: 0;
+}
+
+/* =========================================================================
+   TOPBAR
+   ========================================================================= */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-5);
+  background: linear-gradient(var(--surface-1), color-mix(in oklab, var(--surface-1), var(--bg) 45%));
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* Brand mark — a small lamplit lozenge, pure CSS (no text node). */
+.brand-mark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: radial-gradient(circle at 32% 30%, var(--accent), var(--accent-deep) 70%);
+  box-shadow: 0 0 0 1px rgba(255, 206, 92, 0.35), 0 0 16px -2px var(--accent-glow);
+}
+
+.topbar-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  margin-right: auto;
+  color: var(--ink);
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+/* The current-phase chip carries the one accent as a leading dot. */
+.chip-phase {
+  color: var(--ink);
+}
+
+.chip-phase::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 1px;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.chip-error {
+  color: var(--error);
+  border-color: color-mix(in oklab, var(--error), transparent 60%);
+  background: color-mix(in oklab, var(--error), transparent 88%);
+  text-transform: none;
+}
+
+/* Optional "Warm-up questions" affordance in the topbar — a subtle gold-outline
+   pill (an invitation, not a loud CTA). Sits in the same row as the chips. */
+.warmup-chip {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent), transparent 92%);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 55%);
+  border-radius: var(--radius-pill);
+  padding: 5px 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.16s var(--ease-soft), border-color 0.16s var(--ease-soft),
+    box-shadow 0.16s var(--ease-soft);
+}
+
+.warmup-chip::before {
+  content: '✦';
+  margin-right: 6px;
+  font-size: 10px;
+  vertical-align: 1px;
+}
+
+.warmup-chip:hover {
+  background: var(--accent-glow);
+  border-color: color-mix(in oklab, var(--accent), transparent 30%);
+  box-shadow: 0 0 16px -4px var(--accent-glow);
+}
+
+/* =========================================================================
+   LANDING (no-session) — its own full-height shell, NOT the app grid.
+   The old bug: the no-session view reused .app-shell, whose first grid row is
+   the fixed topbar track; TopicPicker (height:100%) was crushed into that
+   track and the centred <h1> clipped from the top ("top text is 75% cut").
+   ========================================================================= */
+.landing-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in oklab, var(--accent), transparent 94%), transparent 60%),
+    var(--bg);
+}
+
+.topic-picker {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-5);
+  padding: var(--sp-7) var(--sp-5);
+  text-align: center;
+}
+
+.landing-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+.landing-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.landing-title {
+  font-size: clamp(30px, 5vw, 46px);
+  font-weight: 600;
+  max-width: 16ch;
+  /* No fixed height / tight line-height clipping here — the header sizes to
+     its own content in a flex-centred column. */
+}
+
+.landing-title .accent {
+  color: var(--accent);
+}
+
+.landing-promise {
+  font-size: 16px;
+  color: var(--ink-muted);
+  max-width: 52ch;
+  margin: calc(-1 * var(--sp-3)) 0 var(--sp-3);
+  line-height: 1.5;
+}
+
+.lesson-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 260px));
+  gap: var(--sp-4);
+  justify-content: center;
+  counter-reset: lesson;
+}
+
+/* Each card is a button whose ONLY text node is the lesson title (a test pins
+   textContent === title), so all hierarchy is CSS: a mono index badge and a
+   hover arrow are pseudo-elements, not text. */
+.lesson-card {
+  position: relative;
+  counter-increment: lesson;
+  display: flex;
+  align-items: flex-end;
+  min-height: 104px;
+  padding: var(--sp-4) var(--sp-5);
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  transition: transform 0.18s var(--ease-soft), border-color 0.18s var(--ease-soft),
+    background 0.18s var(--ease-soft), box-shadow 0.18s var(--ease-soft);
+}
+
+.lesson-card::before {
+  content: counter(lesson, decimal-leading-zero);
+  position: absolute;
+  top: var(--sp-4);
+  left: var(--sp-5);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+
+.lesson-card::after {
+  content: '→';
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  font-size: 16px;
+  color: var(--accent);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.18s var(--ease-soft), transform 0.18s var(--ease-soft);
+}
+
+.lesson-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--accent), transparent 55%);
+  background: var(--surface-2);
+  box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.9), 0 0 0 1px var(--hairline);
+}
+
+.lesson-card:hover:not(:disabled)::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.topic-custom {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: stretch;
+  margin-top: var(--sp-2);
+}
+
+.topic-custom input {
+  min-width: 280px;
+  padding: 11px 15px;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+}
+
+/* Access gate (server/src/accessGate.ts) — shown on the landing screen in
+   place of TopicPicker when a createSession call comes back 401 gated.
+   Reuses the landing's flex-centred layout; input/button pick up the same
+   visual language as .topic-custom below. */
+.access-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6) var(--sp-5);
+}
+
+.access-gate-copy {
+  font-size: 16px;
+  color: var(--ink-muted);
+  max-width: 40ch;
+}
+
+.access-gate input {
+  min-width: 220px;
+  padding: 11px 15px;
+  font-size: 15px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-sm);
+}
+
+.access-gate button {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.16s var(--ease-soft), box-shadow 0.16s var(--ease-soft);
+}
+
+.access-gate button:hover {
+  background: var(--accent-deep);
+}
+
+/* =========================================================================
+   BUTTONS — shared press feedback + visual bases
+   ========================================================================= */
+.btn {
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.15s ease, background 0.16s var(--ease-soft),
+    border-color 0.16s var(--ease-soft);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Quiet, surface-level button (ask options, transport, generic actions). */
+.btn-surface,
+.player-bar button,
+.ask-options button {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.16s var(--ease-soft), border-color 0.16s var(--ease-soft);
+}
+
+.player-bar button:hover:not(:disabled),
+.ask-options button:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--hairline-strong);
+}
+
+.ask-options button:disabled,
+.player-bar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Accent (primary) button — Start, Send, Answer. */
+.topic-custom button,
+.chat-input-row button,
+.ask-input-row button {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.16s var(--ease-soft), box-shadow 0.16s var(--ease-soft);
+}
+
+.topic-custom button:hover:not(:disabled),
+.chat-input-row button:hover:not(:disabled),
+.ask-input-row button:hover:not(:disabled) {
+  background: var(--accent-deep);
+  box-shadow: 0 0 20px -6px var(--accent-glow);
+}
+
+/* Persistent "you picked this" marker (mcq choice / lesson card). */
+.btn-pressed {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent) !important;
+}
+
+/* Busy dot appended after the label while an async round-trip is in flight. */
+.btn-loading {
+  position: relative;
+}
+
+.btn-loading::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: middle;
+  animation: btn-loading-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes btn-loading-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+/* =========================================================================
+   BOARD AREA
+   ========================================================================= */
+.board-wrap {
+  position: relative;
+  overflow: auto;
+  padding: var(--sp-5);
+  min-height: 0;
+  /* Faint graph-paper motif for the whiteboard identity — shows in the gutter
+     and empty state; opaque cards sit on top of it. Scrolls with content. */
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-ink) 1px, transparent 1px);
+  background-size: 27px 27px;
+  background-attachment: local;
+}
+
+.board-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  width: 100%;
+  min-height: 100%;
+}
+
+.board-block {
+  cursor: pointer;
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+  transition: border-color 0.18s var(--ease-soft), box-shadow 0.18s var(--ease-soft);
+}
+
+.board-block:hover {
+  border-color: var(--hairline-strong);
+}
+
+/* Board empty state — quiet designed placeholder before the first action. */
+.board-empty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--ink-faint);
+  text-align: center;
+  padding: var(--sp-7);
+}
+
+.board-empty-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  border: 1px dashed var(--hairline-strong);
+  background-image:
+    linear-gradient(var(--grid-ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-ink) 1px, transparent 1px);
+  background-size: 12px 12px;
+  opacity: 0.8;
+}
+
+.board-empty-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.board-empty-sub {
+  font-size: 13px;
+  max-width: 30ch;
+}
+
+/* --- Selection & focus states --- */
+.board-selected {
+  outline: 2px dashed var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Focus "dim others": recede the rest a touch (not blackout) while a subject
+   is highlighted; smooth both ways so it never flickers. */
+.focus-dim {
+  opacity: 0.32;
+  transition: opacity 0.4s var(--ease-soft);
+}
+
+.focus-highlight {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* A single gentle breathe on focus — clean, not a strobe. */
+.focus-pulse {
+  animation: focus-pulse 1.3s var(--ease-soft) 1;
+}
+
+@keyframes focus-pulse {
+  0% { opacity: 1; }
+  45% { opacity: 0.66; }
+  100% { opacity: 1; }
+}
+
+/* --- Animation opacity discipline (explicit user ask) ---
+   While an on-axes element is mid-tween/mid-drag (its id is in the store's
+   liveOverrides), render it at reduced opacity, settling back to 1.0 on a
+   soft ease when the override clears. Transition lives on the wrapper so both
+   directions animate; no layout shift (opacity only). */
+.board-canvas g[data-el-id] {
+  transition: opacity 0.28s var(--ease-soft);
+}
+
+.board-animating {
+  opacity: 0.65;
+}
+
+/* Draw-in reveal (task-s2 3b1b feel): the stroke wipes in AND fades from a
+   reduced opacity up to full, so a curve/vector/segment arriving reads as
+   "being drawn" rather than snapping on. See Board.tsx's drawInClassFor. */
+.board-draw-in path,
+.board-draw-in line {
+  stroke-dasharray: 3000;
+  stroke-dashoffset: 3000;
+  opacity: 0.55;
+  animation: board-draw-in 720ms var(--ease-soft) forwards;
+}
+
+@keyframes board-draw-in {
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.board-unknown,
+.board-orphaned {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px dashed var(--hairline-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+/* --- Frames mode (V-1): a strip of the same component pinned at 4 sampled
+   values, rendered below the live element instead of tweening. Each preview
+   is a full nested <Board> (Gallery's isolated-scene trick) scaled down via
+   a fixed-size clipping box + CSS transform, since Board always renders its
+   Mafs canvas at a fixed pixel size. --- */
+.frames-strips {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px dashed var(--hairline);
+}
+
+.frames-strip {
+  display: flex;
+  gap: var(--sp-3);
+  overflow-x: auto;
+  padding-bottom: var(--sp-1);
+}
+
+.frames-strip + .frames-strip {
+  margin-top: var(--sp-2);
+}
+
+.frames-item {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.frames-item-preview {
+  flex: none;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+/* Board's own Mafs canvas renders at a fixed ~660px wide card; scale that
+   down to fit the 200px preview box instead of teaching Board a "small mode". */
+.frames-item-preview .board-canvas {
+  width: 640px;
+  transform: scale(0.3125);
+  transform-origin: top left;
+}
+
+.frames-item-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* =========================================================================
+   MAFS — recessive grid, stronger axes, strongest data (dataviz rule).
+   Grid lines barely register against the card surface; the origin axes are a
+   step stronger; the (validated) series marks are the loudest thing.
+   ========================================================================= */
+.MafsView {
+  --mafs-bg: transparent;                                    /* use the card surface */
+  --mafs-fg: var(--ink-muted);                               /* default text = muted */
+  --mafs-line-color: rgba(255, 240, 214, 0.07);              /* grid: barely there */
+  --grid-line-subdivision-color: rgba(255, 240, 214, 0.035); /* subdivisions: fainter */
+  --mafs-origin-color: rgba(242, 237, 227, 0.42);            /* axes: a step stronger */
+  --mafs-axis-stroke-width: 1px;
+  font-family: var(--font-mono);
+}
+
+/* Axis tick labels: quiet, mono, tabular — an instrument scale, not a shout. */
+.MafsView .mafs-axis text,
+.MafsView text {
+  fill: var(--ink-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================================
+   BOARD CONTENT: labels, numberline, table, steps
+   ========================================================================= */
+.board-label {
+  display: inline-block;
+  font-size: 1.1em;
+  max-width: 640px;
+  overflow-wrap: break-word;
+}
+
+.board-numberline {
+  display: block;
+  max-width: 100%;
+}
+
+.board-table {
+  border-collapse: collapse;
+  max-width: 640px;
+  font-variant-numeric: tabular-nums;
+}
+
+.board-table th,
+.board-table td {
+  border: 1px solid var(--hairline);
+  padding: 6px 12px;
+  text-align: center;
+}
+
+.board-table th {
+  background: var(--surface-2);
+  color: var(--ink-muted);
+  font-weight: 600;
+}
+
+.board-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: 640px;
+}
+
+.board-steps-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin-bottom: var(--sp-1);
+}
+
+.board-steps-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.board-steps-note {
+  font-size: 12px;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+/* Physics SVGs scale to the container up to their natural size. */
+.physics-projectile,
+.physics-pendulum,
+.physics-incline,
+.physics-fbd,
+.physics-orbit,
+.physics-spring,
+.physics-wave,
+.physics-ray {
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  display: block;
+}
+
+/* Same dataviz layering as the Mafs grid, applied to hand-drawn physics SVGs:
+   dashed guide/reference strokes (traces, envelopes, tick guides, orbit path)
+   are the RECESSIVE layer, so drop their opacity — the solid body/force marks
+   then read as the strongest thing. Attribute-only (never touches geometry or
+   the dasharray the render tests assert). */
+.physics-projectile [stroke-dasharray],
+.physics-pendulum [stroke-dasharray],
+.physics-incline [stroke-dasharray],
+.physics-orbit [stroke-dasharray],
+.physics-spring [stroke-dasharray],
+.physics-wave [stroke-dasharray],
+.physics-ray [stroke-dasharray] {
+  stroke-opacity: 0.5;
+}
+
+/* =========================================================================
+   CAPTION
+   ========================================================================= */
+.caption {
+  position: sticky;
+  bottom: 0;
+  padding: var(--sp-4) var(--sp-5) var(--sp-3);
+  background: linear-gradient(transparent, var(--bg) 42%);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+  min-height: 52px;
+}
+
+/* Reading pace (V-1, feedback: "the text goes too fast, I'm unable to
+   finish it and it goes away"): the previous say lingers above the current
+   one, dimmed — a reader who glances away doesn't lose the line that just
+   finished. */
+.caption-ghost {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-faint);
+  margin-bottom: var(--sp-1);
+}
+
+/* =========================================================================
+   ASK WIDGET
+   ========================================================================= */
+.ask-widget {
+  margin: 0 var(--sp-5) var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--surface-1);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 62%);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px -18px rgba(0, 0, 0, 0.8);
+}
+
+.ask-text {
+  margin-bottom: var(--sp-3);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ask-options {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.ask-input-row {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.ask-input-row input,
+.ask-input-row textarea {
+  flex: 1;
+}
+
+.ask-input-row textarea {
+  min-height: 52px;
+  resize: vertical;
+}
+
+/* =========================================================================
+   CONTROL STRIP
+   ========================================================================= */
+.control-strip {
+  display: flex;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-5);
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 13px;
+}
+
+.control-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-muted);
+  min-width: 1.5em;
+}
+
+.control-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  min-width: 3em;
+  color: var(--ink);
+}
+
+.control-input input {
+  width: 5em;
+  font-family: var(--font-mono);
+}
+
+/* Range input — themed track + accent thumb. */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--surface-3);
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+/* =========================================================================
+   PLAYER BAR
+   ========================================================================= */
+.player-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5);
+  border-top: 1px solid var(--hairline);
+}
+
+.player-bar button {
+  min-width: 38px;
+  padding: 7px 11px;
+  font-size: 14px;
+}
+
+.player-bar select {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 7px 10px;
+}
+
+/* Continue button (task F-1): same transport-button box as the rest of
+   `.player-bar button` (min-width/padding/font-size above), but accented like
+   the primary Send/Answer buttons so it reads as the call-to-action it is. */
+.continue-btn {
+  min-width: auto;
+  font-weight: 600;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 1px solid transparent;
+}
+
+.continue-btn:hover:not(:disabled) {
+  background: var(--accent-deep);
+  box-shadow: 0 0 20px -6px var(--accent-glow);
+}
+
+/* Frames/voice toggles (V-1): plain `.player-bar button` box, sized to their
+   (wider than the transport icons') label; the "on" state reuses the same
+   `.btn-pressed` marker as an mcq choice/lesson card elsewhere in the app. */
+.frames-toggle,
+.voice-toggle {
+  min-width: auto;
+}
+
+/* =========================================================================
+   CHAT
+   ========================================================================= */
+/* Right column wrapper (holds the tab switcher + the active panel). Owns the
+   column's border + surface so the panels inside stay transparent and no
+   double-border appears. (Layout shape migrated here from the old
+   transcript.css, now folded into this system.) */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: color-mix(in oklab, var(--surface-1), var(--bg) 40%);
+  border-left: 1px solid var(--hairline);
+}
+
+.chat,
+.sidebar .chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  /* Same min-height:0 fix as .main, one level down. */
+  min-height: 0;
+}
+
+/* --- Sidebar tab switcher: a quiet segmented control --- */
+.sidebar-tabs {
+  display: flex;
+  flex: 0 0 auto;
+  padding: var(--sp-2) var(--sp-2) 0;
+  gap: var(--sp-1);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.sidebar-tabs button {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: color 0.16s var(--ease-soft), background 0.16s var(--ease-soft),
+    border-color 0.16s var(--ease-soft);
+}
+
+.sidebar-tabs button:hover:not([aria-selected='true']) {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.sidebar-tabs button[aria-selected='true'] {
+  color: var(--ink);
+  background: var(--surface-3);
+  border-bottom-color: var(--accent);
+}
+
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* Chat empty state — quiet placeholder before the first message. */
+.chat-empty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+  color: var(--ink-faint);
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.chat-empty-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.chat-empty-sub {
+  font-size: 13px;
+  max-width: 26ch;
+  line-height: 1.5;
+}
+
+.chat-msg {
+  padding: 9px 13px;
+  border-radius: 14px;
+  max-width: 88%;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chat-teacher {
+  align-self: flex-start;
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-bottom-left-radius: 5px;
+  color: var(--ink);
+}
+
+.chat-student {
+  align-self: flex-end;
+  background: var(--student-bubble);
+  border-bottom-right-radius: 5px;
+  color: #241d10;
+}
+
+.chat-system {
+  align-self: center;
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+}
+
+.chat-error {
+  align-self: center;
+  color: var(--error);
+  font-size: 12px;
+  text-align: center;
+}
+
+.selection-chip {
+  margin: 0 var(--sp-4) var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.chat-input-row {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.chat-input-row input {
+  flex: 1;
+}
+
+.app-error {
+  color: var(--error);
+  padding: var(--sp-2) var(--sp-5);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* =========================================================================
+   TRANSCRIPT PANEL — a quiet narration reference (right sidebar, Transcript
+   tab). Step headers in the display face; narration in the readable text face,
+   muted, with a comfortable reading rhythm.
+   ========================================================================= */
+.transcript-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.transcript-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.transcript-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  padding-bottom: var(--sp-1);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.transcript-line {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
+/* Empty state — consistent with .board-empty / .chat-empty. */
+.transcript-empty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+  color: var(--ink-faint);
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.transcript-empty-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.transcript-empty-sub {
+  font-size: 13px;
+  max-width: 26ch;
+  line-height: 1.5;
+}
+
+/* =========================================================================
+   GALLERY (dev-only #gallery route) — inherits tokens, lightly refreshed.
+   ========================================================================= */
+.gallery-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  padding: var(--sp-6) var(--sp-4);
+}
+
+.gallery-header {
+  max-width: 1200px;
+  margin: 0 auto var(--sp-7);
+  text-align: center;
+}
+
+.gallery-header h1 {
+  font-size: 32px;
+  margin: 0 0 var(--sp-3);
+}
+
+.gallery-header p {
+  font-size: 16px;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.gallery-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+  gap: var(--sp-5);
+}
+
+.gallery-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.card-header h3 {
+  margin: 0 0 var(--sp-2);
+  font-size: 18px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.card-doc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-4);
+  gap: var(--sp-4);
+  min-height: 400px;
+}
+
+.card-renderer {
+  flex: 1;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  background: var(--surface-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.card-code {
+  background: color-mix(in oklab, var(--bg), black 20%);
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  max-height: 120px;
+}
+
+.card-code pre {
+  margin: 0;
+  padding: var(--sp-3);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ink-muted);
+}
+
+.card-controls {
+  padding: var(--sp-4);
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.gallery-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 12px;
+}
+
+.slider-label {
+  font-family: var(--font-mono);
+  color: var(--ink-muted);
+  min-width: 60px;
+}
+
+.gallery-slider input[type='range'] {
+  flex: 1;
+}
+
+.slider-value {
+  min-width: 50px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.replay-demo {
+  grid-column: 1 / -1;
+}
+
+.replay-button {
+  padding: 10px 18px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s var(--ease-soft);
+}
+
+.replay-button:hover:not(:disabled) {
+  background: var(--accent-deep);
+}
+
+.replay-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

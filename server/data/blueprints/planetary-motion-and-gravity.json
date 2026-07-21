@@ -1,0 +1,510 @@
+{
+  "title": "Planetary Motion and Gravity",
+  "prerequisites": [
+    {
+      "id": "pq1",
+      "question": "An object in uniform circular motion experiences a force directed:",
+      "options": [
+        "tangent to the circle",
+        "toward the center of the circle",
+        "away from the center of the circle",
+        "in the direction of velocity"
+      ],
+      "answer": "toward the center of the circle",
+      "remediation": "Centripetal force always points toward the center — it's what keeps an object moving in a circle rather than flying off in a straight line."
+    },
+    {
+      "id": "pq2",
+      "question": "Two masses exert a gravitational force on each other. If the distance between them doubles, the force becomes:",
+      "options": [
+        "half as strong",
+        "one-quarter as strong",
+        "twice as strong",
+        "four times as strong"
+      ],
+      "answer": "one-quarter as strong",
+      "remediation": "Newton's law of gravitation depends on 1/r² — doubling distance means the force divides by 2² = 4."
+    },
+    {
+      "id": "pq3",
+      "question": "Kepler's second law states that a line joining a planet to the Sun sweeps out equal areas in equal times. This implies the planet moves:",
+      "options": [
+        "at constant speed throughout its orbit",
+        "faster when closer to the Sun",
+        "slower when closer to the Sun",
+        "at the same speed as every other planet"
+      ],
+      "answer": "faster when closer to the Sun",
+      "remediation": "Equal areas in equal times means the planet must cover more arc length when it's nearer the Sun — so it speeds up at perihelion."
+    }
+  ],
+  "beats": [
+    {
+      "title": "Elliptical orbits — what they look like",
+      "goal": "Build intuition that planetary orbits are ellipses, not circles, and that the Sun sits at one focus.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Orbits are ellipses"
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb1",
+          "a": 40,
+          "e": 0.6,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "Earth"
+        },
+        {
+          "op": "say",
+          "text": "This is an ellipse, not a circle — the Sun sits at one focus, off-center. Watch how the planet's distance from the Sun changes.",
+          "sync": "orb1"
+        },
+        {
+          "op": "anim",
+          "id": "orb1",
+          "k": "t",
+          "to": 6.28,
+          "dur": 4,
+          "ease": "linear"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb1",
+          "tex": "a = \\text{semi-major axis}",
+          "x": 28,
+          "y": 18
+        },
+        {
+          "op": "say",
+          "text": "The semi-major axis a is half the longest diameter — it sets the orbit's overall size.",
+          "sync": "lb1"
+        },
+        {
+          "op": "set",
+          "id": "orb1",
+          "k": "e",
+          "v": 0
+        },
+        {
+          "op": "say",
+          "text": "When eccentricity e = 0, the orbit becomes a perfect circle. Now I'll bring e back up.",
+          "sync": "orb1"
+        },
+        {
+          "op": "ctl",
+          "id": "orb1",
+          "k": "e",
+          "kind": "slider",
+          "min": 0,
+          "max": 0.9,
+          "step": 0.01,
+          "label": "eccentricity e"
+        },
+        {
+          "op": "say",
+          "text": "Try the eccentricity slider — slide it from 0 to 0.9. How does the shape change?"
+        },
+        {
+          "op": "ask",
+          "id": "chk1",
+          "kind": "mcq",
+          "text": "Where is the Sun in an elliptical orbit?",
+          "options": [
+            "At the center of the ellipse",
+            "At one focus of the ellipse",
+            "At the edge of the ellipse",
+            "Halfway between center and edge"
+          ],
+          "answer": "At one focus of the ellipse"
+        }
+      ]
+    },
+    {
+      "title": "Kepler's Second Law — sweeping equal areas",
+      "goal": "Demonstrate that a planet moves faster near perihelion and slower near aphelion; connect this to equal areas in equal times.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Equal areas, unequal speeds"
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb2",
+          "a": 40,
+          "e": 0.5,
+          "showVectors": true,
+          "centerLabel": "Sun",
+          "bodyLabel": "Planet"
+        },
+        {
+          "op": "say",
+          "text": "Watch the velocity vector — it grows longer when the planet is closer to the Sun and shorter when farther away.",
+          "sync": "orb2"
+        },
+        {
+          "op": "anim",
+          "id": "orb2",
+          "k": "t",
+          "to": 6.28,
+          "dur": 6,
+          "ease": "linear"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb2a",
+          "tex": "\\text{perihelion (fastest)}",
+          "x": 10,
+          "y": 30
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb2b",
+          "tex": "\\text{aphelion (slowest)}",
+          "x": 55,
+          "y": 30
+        },
+        {
+          "op": "say",
+          "text": "The planet sweeps the same area in the same time regardless of where it is — so it must move faster when the radius is shorter.",
+          "sync": "lb2a"
+        },
+        {
+          "op": "ask",
+          "id": "chk2",
+          "kind": "mcq",
+          "text": "Why does a planet speed up near perihelion?",
+          "options": [
+            "Gravity is weaker there",
+            "It must sweep equal area in equal time with a shorter radius",
+            "The Sun pushes it harder",
+            "Its mass decreases"
+          ],
+          "answer": "It must sweep equal area in equal time with a shorter radius"
+        }
+      ]
+    },
+    {
+      "title": "Newton's Law of Universal Gravitation",
+      "goal": "Quantify the gravitational force between two masses and connect the inverse-square law to orbital behavior.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "The force that holds it all together"
+        },
+        {
+          "op": "add",
+          "c": "fbd",
+          "id": "fbd1",
+          "label": "Planet",
+          "forces": [
+            {
+              "name": "F_g",
+              "deg": 180,
+              "mag": 40
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb3a",
+          "tex": "F = G\\frac{Mm}{r^2}",
+          "x": 8,
+          "y": 30
+        },
+        {
+          "op": "say",
+          "text": "Every pair of masses attracts with a force proportional to 1 over r squared. This is the centripetal force for every orbit.",
+          "sync": "fbd1"
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tb1",
+          "cols": [
+            "Distance r",
+            "Force F (relative)"
+          ],
+          "rows": [
+            [
+              "1",
+              "1"
+            ],
+            [
+              "2",
+              "1/4 = 0.25"
+            ],
+            [
+              "3",
+              "1/9 ≈ 0.11"
+            ],
+            [
+              "4",
+              "1/16 ≈ 0.0625"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Doubling the distance cuts the force to a quarter. Tripling it cuts to a ninth. This steep drop-off shapes every orbit.",
+          "sync": "tb1"
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb3",
+          "a": 40,
+          "e": 0,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "Planet"
+        },
+        {
+          "op": "say",
+          "text": "For a circular orbit, gravity supplies exactly the centripetal force needed: G M m / r² equals m v² / r.",
+          "sync": "orb3"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st1",
+          "title": "Derive orbital speed",
+          "lines": [
+            "\\frac{GMm}{r^2} = \\frac{mv^2}{r}",
+            "\\frac{GM}{r} = v^2",
+            "v = \\sqrt{\\frac{GM}{r}}"
+          ],
+          "notes": [
+            "set gravity equal to centripetal force",
+            "cancel m and multiply both sides by r",
+            "take square root of both sides"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Notice: orbital speed depends only on the central mass M and the radius r — the planet's own mass cancels out.",
+          "sync": "st1"
+        },
+        {
+          "op": "ask",
+          "id": "chk3",
+          "kind": "free",
+          "text": "If Earth were suddenly 4 times farther from the Sun, by what factor would the gravitational force decrease?",
+          "answer": "16"
+        }
+      ]
+    },
+    {
+      "title": "Kepler's Third Law — periods and distances",
+      "goal": "Show that T² ∝ a³ for all planets orbiting the same star, and verify with a numerical example.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Harmony of the spheres"
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb4a",
+          "a": 20,
+          "e": 0.3,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "Inner"
+        },
+        {
+          "op": "add",
+          "c": "orbit",
+          "id": "orb4b",
+          "a": 50,
+          "e": 0.3,
+          "showVectors": false,
+          "centerLabel": "Sun",
+          "bodyLabel": "Outer"
+        },
+        {
+          "op": "say",
+          "text": "Two planets orbiting the same star. The outer one has a semi-major axis 2.5 times larger — how much slower is its period?",
+          "sync": "orb4a"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st2",
+          "title": "Kepler's Third Law",
+          "lines": [
+            "T^2 \\propto a^3",
+            "\\frac{T_{\\text{outer}}}{T_{\\text{inner}}} = \\left(\\frac{a_{\\text{outer}}}{a_{\\text{inner}}}\\right)^{3/2}",
+            "\\frac{T_{\\text{outer}}}{T_{\\text{inner}}} = \\left(\\frac{50}{20}\\right)^{3/2}",
+            "\\frac{T_{\\text{outer}}}{T_{\\text{inner}}} = (2.5)^{3/2}",
+            "\\frac{T_{\\text{outer}}}{T_{\\text{inner}}} \\approx 3.95"
+          ],
+          "notes": [
+            "for planets around the same star",
+            "ratio form: take square root of cube",
+            "plug in the semi-major axes",
+            "simplify the ratio",
+            "compute: 2.5^1.5"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "The outer planet takes nearly 4 times longer to complete one orbit. T² scales with a³.",
+          "sync": "st2"
+        },
+        {
+          "op": "ctl",
+          "id": "orb4a",
+          "k": "a",
+          "kind": "slider",
+          "min": 10,
+          "max": 60,
+          "step": 1,
+          "label": "inner a"
+        },
+        {
+          "op": "ctl",
+          "id": "orb4b",
+          "k": "a",
+          "kind": "slider",
+          "min": 15,
+          "max": 80,
+          "step": 1,
+          "label": "outer a"
+        },
+        {
+          "op": "say",
+          "text": "Adjust the semi-major axes. For any pair, the ratio of periods follows (a_outer / a_inner) raised to the 3/2 power."
+        },
+        {
+          "op": "ask",
+          "id": "chk4",
+          "kind": "numeric",
+          "text": "If a planet's semi-major axis is 4 AU, what is T² / a³? (Use AU and years — it should be 1 for our solar system.) Enter the value.",
+          "answer": "1"
+        }
+      ]
+    },
+    {
+      "title": "Escape velocity and orbital energy",
+      "goal": "Derive escape speed from energy conservation and show why it's √2 times the circular orbital speed.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Breaking free"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "orb4a",
+            "orb4b"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "fbd",
+          "id": "fbd2",
+          "label": "Rocket at surface",
+          "forces": [
+            {
+              "name": "F_g",
+              "deg": 270,
+              "mag": 60
+            }
+          ]
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb5a",
+          "tex": "E_{\\text{total}} = \\frac{1}{2}mv^2 - \\frac{GMm}{r}",
+          "x": 8,
+          "y": 30
+        },
+        {
+          "op": "say",
+          "text": "To escape a planet's gravity, total mechanical energy must reach zero — kinetic energy must balance gravitational potential energy.",
+          "sync": "fbd2"
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st3",
+          "title": "Derive escape speed",
+          "lines": [
+            "\\frac{1}{2}mv_{\\text{esc}}^2 - \\frac{GMm}{R} = 0",
+            "\\frac{1}{2}mv_{\\text{esc}}^2 = \\frac{GMm}{R}",
+            "v_{\\text{esc}}^2 = \\frac{2GM}{R}",
+            "v_{\\text{esc}} = \\sqrt{\\frac{2GM}{R}}"
+          ],
+          "notes": [
+            "set total energy to zero at infinity",
+            "move potential term to right side",
+            "multiply both sides by 2/m",
+            "take square root"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Compare this with circular orbital speed v = sqrt(GM/r). Escape speed is sqrt(2) ≈ 1.41 times the orbital speed at the same radius.",
+          "sync": "st3"
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tb2",
+          "cols": [
+            "Body",
+            "Orbital v (km/s)",
+            "Escape v (km/s)"
+          ],
+          "rows": [
+            [
+              "Earth (LEO)",
+              "7.8",
+              "11.2"
+            ],
+            [
+              "Moon",
+              "1.7",
+              "2.4"
+            ],
+            [
+              "Jupiter (cloud top)",
+              "42",
+              "59.5"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Every body's escape speed is √2 times its circular orbital speed at the same distance. Jupiter's deep gravity well demands enormous speed to leave.",
+          "sync": "tb2"
+        },
+        {
+          "op": "ask",
+          "id": "chk5",
+          "kind": "mcq",
+          "text": "How does escape velocity compare to circular orbital velocity at the same radius?",
+          "options": [
+            "They are equal",
+            "Escape is twice as large",
+            "Escape is √2 times as large",
+            "Escape is half as large"
+          ],
+          "answer": "Escape is √2 times as large"
+        }
+      ]
+    }
+  ]
+}

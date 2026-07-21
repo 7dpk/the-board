@@ -1,0 +1,461 @@
+{
+  "title": "Simple Harmonic Motion",
+  "prerequisites": [
+    {
+      "id": "pq1",
+      "question": "A spring is stretched a distance x from its natural length. Hooke's law says the spring pulls back with a force of magnitude:",
+      "options": [
+        "F = k x, directed back toward equilibrium",
+        "F = k x², directed away from equilibrium",
+        "F = m g, straight down",
+        "F = k / x, toward equilibrium"
+      ],
+      "answer": "F = k x, directed back toward equilibrium",
+      "remediation": "Hooke's law is F = -kx: the restoring force grows in proportion to how far you stretch or compress the spring, and always points back toward equilibrium."
+    },
+    {
+      "id": "pq2",
+      "question": "A 'restoring force' is a force that always:",
+      "options": [
+        "points back toward the equilibrium position",
+        "points in the direction of motion",
+        "grows without limit as the object speeds up",
+        "acts only at the moment of release"
+      ],
+      "answer": "points back toward the equilibrium position",
+      "remediation": "A restoring force always pushes or pulls the object back toward its resting point. That single property is what makes motion oscillate rather than fly off."
+    },
+    {
+      "id": "pq3",
+      "question": "As the angle θ increases from 0, the function cos(θ):",
+      "options": [
+        "starts at its maximum of 1 and oscillates smoothly between +1 and −1",
+        "starts at 0 and only ever increases",
+        "stays constant at 1",
+        "jumps between +1 and −1 with nothing in between"
+      ],
+      "answer": "starts at its maximum of 1 and oscillates smoothly between +1 and −1",
+      "remediation": "cos(θ) begins at 1 when θ = 0, falls to −1, and returns to 1 every 2π — a smooth repeating wiggle. That is exactly the shape traced by an object in SHM released from rest."
+    }
+  ],
+  "beats": [
+    {
+      "title": "The universe keeps a beat",
+      "goal": "Hook: oscillation is everywhere. Show a mass bobbing on a spring with its restoring force, and pose the driving question — how fast does it tick, and why does the same math draw waves?",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "What shares a rhythm?"
+        },
+        {
+          "op": "add",
+          "c": "spring",
+          "id": "sp1",
+          "amp": 3,
+          "k": 20,
+          "mass": 1,
+          "showForces": true
+        },
+        {
+          "op": "say",
+          "text": "A heartbeat, a child on a swing, a plucked guitar string, an atom in a crystal — they all share one motion. Watch this mass on a spring.",
+          "sync": "sp1"
+        },
+        {
+          "op": "anim",
+          "id": "sp1",
+          "k": "t",
+          "to": 12,
+          "dur": 8,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Pull it aside and release: the red restoring force always yanks it back toward the middle, so it overshoots, returns, overshoots again — over and over.",
+          "sync": "sp1"
+        },
+        {
+          "op": "say",
+          "text": "That endless back-and-forth is Simple Harmonic Motion. Today we'll find exactly how fast it ticks — and why the very same math draws a wave."
+        }
+      ]
+    },
+    {
+      "title": "The spring's clock",
+      "goal": "Show x(t) = A·cos(√(k/m)·t): the period is set by stiffness k and mass m, never amplitude. Have the student predict the effect of mass, then verify with the springPeriod fact.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "What sets the tempo?"
+        },
+        {
+          "op": "set",
+          "id": "sp1",
+          "k": "t",
+          "v": 0
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb1",
+          "tex": "x(t) = A\\cos\\!\\left(\\sqrt{\\tfrac{k}{m}}\\;t\\right)"
+        },
+        {
+          "op": "say",
+          "text": "The displacement follows a cosine: x(t) = A·cos(√(k/m)·t). A stiffer spring (bigger k) ticks faster; a heavier mass (bigger m) ticks slower.",
+          "sync": "lb1"
+        },
+        {
+          "op": "say",
+          "text": "With k = 20 N/m and m = 1 kg, one full cycle takes T = {{springPeriod(1,20)}} s — that's the number printed under the spring.",
+          "sync": "sp1"
+        },
+        {
+          "op": "ctl",
+          "id": "sp1",
+          "k": "k",
+          "kind": "slider",
+          "min": 5,
+          "max": 80,
+          "step": 1,
+          "label": "stiffness k"
+        },
+        {
+          "op": "ctl",
+          "id": "sp1",
+          "k": "mass",
+          "kind": "slider",
+          "min": 0.5,
+          "max": 8,
+          "step": 0.5,
+          "label": "mass m"
+        },
+        {
+          "op": "say",
+          "text": "Predict before you touch a thing: if you DOUBLE the mass, does the period double too — or grow by less than that?"
+        },
+        {
+          "op": "anim",
+          "id": "sp1",
+          "k": "t",
+          "to": 12,
+          "dur": 8,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Now drag the mass to 2 kg. The period stretches only to T = {{springPeriod(2,20)}} s — about √2 ≈ 1.41 times longer, not 2, because T grows as the square root of m.",
+          "sync": "sp1"
+        }
+      ],
+      "check": {
+        "text": "For a mass on a spring, which single change makes the period LONGER?",
+        "options": [
+          "Increasing the mass",
+          "Increasing the stiffness k",
+          "Increasing the amplitude",
+          "Releasing it from a smaller displacement"
+        ],
+        "answer": "Increasing the mass"
+      }
+    },
+    {
+      "title": "A different clock: the pendulum",
+      "goal": "Show the pendulum is also SHM for small angles, but its period depends on length and gravity — not mass. Contrast it sharply with the spring.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Does a swing keep the same beat?"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "pendulum",
+          "id": "pd1",
+          "length": 2,
+          "deg0": 20,
+          "showForces": true
+        },
+        {
+          "op": "say",
+          "text": "A pendulum swings with the same rhythmic overshoot — for small angles it's SHM as well. But its clock is set by something completely different.",
+          "sync": "pd1"
+        },
+        {
+          "op": "anim",
+          "id": "pd1",
+          "k": "t",
+          "to": 12,
+          "dur": 8,
+          "ease": "linear"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb2",
+          "tex": "T = 2\\pi\\sqrt{\\dfrac{L}{g}}"
+        },
+        {
+          "op": "say",
+          "text": "The pendulum's period is T = 2π√(L/g). With L = 2 m, one full swing takes T = {{pendPeriod(2)}} s — and notice there is no mass anywhere in that formula.",
+          "sync": "lb2"
+        },
+        {
+          "op": "ctl",
+          "id": "pd1",
+          "k": "length",
+          "kind": "slider",
+          "min": 0.5,
+          "max": 5,
+          "step": 0.1,
+          "label": "length L"
+        },
+        {
+          "op": "say",
+          "text": "Predict, then test: to make the swing take twice as long, do you double the length — or quadruple it?"
+        }
+      ],
+      "check": {
+        "text": "A pendulum clock keeps perfect time. You then hang a HEAVIER bob on the same string. Its period will:",
+        "options": [
+          "stay the same — a pendulum's period does not depend on mass",
+          "get longer, because the bob is heavier",
+          "get shorter, because gravity pulls harder",
+          "drop to zero"
+        ],
+        "answer": "stay the same — a pendulum's period does not depend on mass"
+      }
+    },
+    {
+      "title": "The hidden sine wave",
+      "goal": "Reveal the wave connection: a row of SHM oscillators, each lagging the last, traces a traveling wave. SHM in time is a sine wave in space — the same cosine math, one dimension richer.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Where oscillation becomes a wave"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "wave",
+          "id": "w1",
+          "amp": 3,
+          "wavelength": 8,
+          "freq": 0.5,
+          "standing": false
+        },
+        {
+          "op": "say",
+          "text": "Picture a whole row of masses on springs, each starting its swing a moment after the one before it. Photograph them all at once and you get… this — a wave.",
+          "sync": "w1"
+        },
+        {
+          "op": "anim",
+          "id": "w1",
+          "k": "t",
+          "to": 6,
+          "dur": 8,
+          "ease": "linear"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb3",
+          "tex": "y = A\\sin\\!\\left(2\\pi\\!\\left(\\tfrac{x}{\\lambda} - f t\\right)\\right)"
+        },
+        {
+          "op": "say",
+          "text": "Every point is doing pure SHM in time; strung together in space they trace a sine wave moving at v = {{waveSpeed(0.5,8)}} units/s. Same cosine heartbeat, one dimension richer.",
+          "sync": "lb3"
+        },
+        {
+          "op": "ctl",
+          "id": "w1",
+          "k": "wavelength",
+          "kind": "slider",
+          "min": 2,
+          "max": 20,
+          "step": 0.5,
+          "label": "wavelength λ"
+        },
+        {
+          "op": "say",
+          "text": "Stretch the wavelength and watch the speed change — each point still does plain SHM, but the pattern in space breathes."
+        }
+      ],
+      "check": {
+        "text": "How is a traveling wave related to Simple Harmonic Motion?",
+        "options": [
+          "Each point of the medium performs SHM, offset in time from its neighbors",
+          "A wave has nothing to do with SHM",
+          "Only the two endpoints of the wave move in SHM",
+          "SHM begins only after the wave has stopped"
+        ],
+        "answer": "Each point of the medium performs SHM, offset in time from its neighbors"
+      }
+    },
+    {
+      "title": "Deriving the spring's period",
+      "goal": "Derive T = 2π√(m/k) from Hooke's law and Newton's second law, one line at a time — showing the acceleration-proportional-to-displacement fingerprint of SHM and where the 2π comes from.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Where does 2π√(m/k) come from?"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "steps",
+          "id": "st1",
+          "title": "Deriving T for a mass on a spring",
+          "lines": [
+            "F = -k x = m a",
+            "a = -\\dfrac{k}{m}\\,x",
+            "\\omega = \\sqrt{\\dfrac{k}{m}}",
+            "T = \\dfrac{2\\pi}{\\omega} = 2\\pi\\sqrt{\\dfrac{m}{k}}"
+          ],
+          "notes": [
+            "Hooke's restoring force equals mass times acceleration",
+            "acceleration is proportional to −x: the fingerprint of SHM",
+            "matching a = −ω²x reads off the angular frequency ω",
+            "one full cycle is 2π/ω — heavier is slower, stiffer is faster"
+          ],
+          "shown": 1
+        },
+        {
+          "op": "say",
+          "text": "Start from what you already know: Hooke's law F = −kx set equal to Newton's ma. Let's unfold it one line at a time.",
+          "sync": "st1"
+        },
+        {
+          "op": "anim",
+          "id": "st1",
+          "k": "shown",
+          "to": 4,
+          "dur": 3
+        },
+        {
+          "op": "say",
+          "text": "The pattern a = −(k/m)x is the fingerprint of SHM: acceleration always proportional to displacement and always pointing back. Only a cosine solves it.",
+          "sync": "st1"
+        },
+        {
+          "op": "say",
+          "text": "The final line reads it off: T = 2π√(m/k). Check it against the very first spring — k = 20, m = 1 gives T = {{springPeriod(1,20)}} s, exactly the number it showed you.",
+          "sync": "st1"
+        }
+      ],
+      "check": {
+        "text": "Using T = 2π√(m/k), what is the period of a 4 kg mass on a spring with k = 16 N/m?",
+        "options": [
+          "1 s",
+          "{{springPeriod(4,16)}} s (≈ π)",
+          "12.6 s",
+          "0.5 s"
+        ],
+        "answer": "{{springPeriod(4,16)}} s (≈ π)"
+      }
+    },
+    {
+      "title": "Bringing it together",
+      "goal": "Unify spring, pendulum, and wave under one idea — a restoring force proportional to displacement — and test the synthesis, including the classic amplitude misconception.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "One idea, many faces"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "spring",
+          "id": "sp2",
+          "amp": 3,
+          "k": 20,
+          "mass": 1,
+          "showForces": false
+        },
+        {
+          "op": "say",
+          "text": "Everything today obeyed one rule: a restoring force proportional to displacement. That single rule forces a cosine in time — the heartbeat behind them all.",
+          "sync": "sp2"
+        },
+        {
+          "op": "anim",
+          "id": "sp2",
+          "k": "t",
+          "to": 12,
+          "dur": 7,
+          "ease": "linear"
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tb1",
+          "cols": [
+            "System",
+            "Period",
+            "Set by"
+          ],
+          "rows": [
+            [
+              "mass–spring",
+              "2π√(m/k)",
+              "mass and stiffness"
+            ],
+            [
+              "pendulum (small angle)",
+              "2π√(L/g)",
+              "length and gravity"
+            ],
+            [
+              "traveling wave",
+              "1/f",
+              "how fast each point oscillates"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Spring, pendulum, wave — same heartbeat, different clocks. Understand one and you understand them all.",
+          "sync": "tb1"
+        },
+        {
+          "op": "ctl",
+          "id": "sp2",
+          "k": "amp",
+          "kind": "slider",
+          "min": 1,
+          "max": 8,
+          "step": 0.5,
+          "label": "amplitude A"
+        },
+        {
+          "op": "say",
+          "text": "One last test — drag the amplitude and watch: the period does NOT budge. Amplitude sets how big the swing is, never how fast it ticks."
+        }
+      ],
+      "check": {
+        "text": "What do a mass on a spring, a small-angle pendulum, and a point on a wave all share?",
+        "options": [
+          "A restoring force proportional to displacement, giving cosine motion",
+          "A period that depends on the amplitude",
+          "A period that depends on the object's mass",
+          "Exactly the same period as one another"
+        ],
+        "answer": "A restoring force proportional to displacement, giving cosine motion"
+      }
+    }
+  ]
+}

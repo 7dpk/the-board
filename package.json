@@ -1,0 +1,18 @@
+{
+  "name": "board",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w server & npm run dev -w client",
+    "test": "npm test --workspaces --if-present",
+    "eval": "npm run eval -w server --",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

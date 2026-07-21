@@ -1,0 +1,575 @@
+{
+  "title": "Quadratic Functions",
+  "prerequisites": [
+    {
+      "id": "pr1",
+      "question": "What does the expression (x + 3)(x - 2) simplify to?",
+      "options": [
+        "x^2 + x - 6",
+        "x^2 - x - 6",
+        "x^2 + 5x - 6",
+        "x^2 + x + 6"
+      ],
+      "answer": "x^2 + x - 6",
+      "remediation": "Use FOIL: multiply First (x·x), Outer (x·-2), Inner (3·x), Last (3·-2), then combine like terms."
+    },
+    {
+      "id": "pr2",
+      "question": "If f(x) = 3x - 4, what is f(2)?",
+      "options": [
+        "2",
+        "6",
+        "-4",
+        "10"
+      ],
+      "answer": "2",
+      "remediation": "Function notation f(2) means substitute x = 2: f(2) = 3(2) - 4 = 6 - 4 = 2."
+    },
+    {
+      "id": "pr3",
+      "question": "What is the y-intercept of the line y = 2x - 5?",
+      "options": [
+        "(0, -5)",
+        "(-5, 0)",
+        "(0, 2)",
+        "(2, 0)"
+      ],
+      "answer": "(0, -5)",
+      "remediation": "The y-intercept is where x = 0. Substitute 0 for x: y = 2(0) - 5 = -5, so the point is (0, -5)."
+    }
+  ],
+  "beats": [
+    {
+      "title": "Tossing a Ball",
+      "goal": "Build intuition that a quadratic models a ball's path and has a single highest point (the vertex).",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Tossing a Ball"
+        },
+        {
+          "op": "add",
+          "c": "projectile",
+          "id": "pj1",
+          "v0": 18,
+          "deg": 60,
+          "g": 9.8,
+          "t": 0,
+          "trace": true
+        },
+        {
+          "op": "say",
+          "text": "Imagine tossing a ball. Its path through the air is a curve called a parabola — the graph of a quadratic function. Watch it fly.",
+          "sync": "pj1"
+        },
+        {
+          "op": "anim",
+          "id": "pj1",
+          "k": "t",
+          "to": 1,
+          "dur": 2.5,
+          "ease": "linear"
+        },
+        {
+          "op": "say",
+          "text": "Notice how it rises, peaks, then falls. That single peak — the highest point — is called the vertex.",
+          "sync": "pj1"
+        },
+        {
+          "op": "anim",
+          "id": "pj1",
+          "k": "t",
+          "to": 0,
+          "dur": 0.1
+        },
+        {
+          "op": "say",
+          "text": "Now try the angle slider. Before you drag: what happens to the peak height as you steepen the launch angle toward straight up?",
+          "sync": "pj1"
+        },
+        {
+          "op": "ctl",
+          "id": "pj1",
+          "k": "deg",
+          "kind": "slider",
+          "min": 15,
+          "max": 85,
+          "step": 1,
+          "label": "Launch angle"
+        }
+      ],
+      "check": {
+        "text": "As you increase the launch angle toward vertical, the ball's maximum height...",
+        "options": [
+          "decreases",
+          "stays the same",
+          "increases",
+          "drops to zero"
+        ],
+        "answer": "increases"
+      }
+    },
+    {
+      "title": "Shape of a Parabola",
+      "goal": "Show that changing 'a' in y = ax^2 controls the width and direction of the parabola.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Shape of a Parabola"
+        },
+        {
+          "op": "clear",
+          "keep": []
+        },
+        {
+          "op": "add",
+          "c": "axes",
+          "id": "ax1",
+          "xmin": -6,
+          "xmax": 8,
+          "ymin": -8,
+          "ymax": 8,
+          "xl": "x",
+          "yl": "y"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "pl1",
+          "on": "ax1",
+          "expr": "x^2",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "The simplest quadratic is y = x^2. The coefficient 'a' in front of x^2 changes the shape.",
+          "sync": "pl1"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "pl2",
+          "on": "ax1",
+          "expr": "2*x^2",
+          "color": "red"
+        },
+        {
+          "op": "say",
+          "text": "When a = 2, the parabola gets steeper — it 'hugs' the y-axis.",
+          "sync": "pl2"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "pl3",
+          "on": "ax1",
+          "expr": "0.3*x^2",
+          "color": "green"
+        },
+        {
+          "op": "say",
+          "text": "When a = 0.3, it flattens out — wider and shallower.",
+          "sync": "pl3"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "pl4",
+          "on": "ax1",
+          "expr": "-x^2",
+          "color": "orange",
+          "dash": true
+        },
+        {
+          "op": "say",
+          "text": "And when a is negative — here a = -1 — the parabola flips upside down. Its vertex is now a highest point instead of a lowest one.",
+          "sync": "pl4"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb1",
+          "tex": "a>0: \\text{opens up}",
+          "on": "ax1",
+          "x": 3.5,
+          "y": 6
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "lb2",
+          "tex": "a<0: \\text{opens down}",
+          "on": "ax1",
+          "x": 3.5,
+          "y": -6
+        }
+      ]
+    },
+    {
+      "title": "The Vertex",
+      "goal": "Teach that every parabola y = ax^2 + bx + c has a vertex at x = -b/(2a), and show how to find its y-value.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "The Vertex"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "pf1",
+          "on": "ax1",
+          "expr": "2*x^2 - 8*x + 5",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "Here's y = 2x^2 - 8x + 5. Every parabola has exactly one vertex — its turning point.",
+          "sync": "pf1"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "vx",
+          "on": "ax1",
+          "x": 2,
+          "y": -3,
+          "label": "vertex",
+          "color": "red"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "dragv",
+          "on": "ax1",
+          "x": 4,
+          "y": 5,
+          "color": "orange"
+        },
+        {
+          "op": "ctl",
+          "id": "dragv",
+          "k": "x",
+          "kind": "drag"
+        },
+        {
+          "op": "say",
+          "text": "The x-coordinate of the vertex is always x = -b/(2a). Here a = 2 and b = -8, so x = {{vertexX(2,-8)}}.",
+          "sync": "vx"
+        },
+        {
+          "op": "focus",
+          "ids": [
+            "vx"
+          ],
+          "style": "pulse"
+        },
+        {
+          "op": "say",
+          "text": "Plug that x back into the function to get y = {{vertexY(2,-8,5)}}. So the vertex is ({{vertexX(2,-8)}}, {{vertexY(2,-8,5)}})."
+        },
+        {
+          "op": "add",
+          "c": "segment",
+          "id": "sym",
+          "on": "ax1",
+          "x1": 2,
+          "y1": -3,
+          "x2": 2,
+          "y2": 6,
+          "dash": true
+        },
+        {
+          "op": "say",
+          "text": "The vertical line through the vertex — x = {{vertexX(2,-8)}} — is the axis of symmetry. The parabola is a mirror image across this line.",
+          "sync": "sym"
+        },
+        {
+          "op": "say",
+          "text": "Drag this orange point along the curve. Notice the y-value is lowest exactly at the vertex — that's why it's the minimum."
+        }
+      ]
+    },
+    {
+      "title": "Roots and the Discriminant",
+      "goal": "Show that roots are x-intercepts and the discriminant b^2 - 4ac tells how many there are.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Roots and the Discriminant"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "rq1",
+          "on": "ax1",
+          "expr": "x^2 - 2*x - 3",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "This is y = x^2 - 2x - 3. Where does it cross the x-axis? Those points are called roots or zeros.",
+          "sync": "rq1"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "rt1",
+          "on": "ax1",
+          "x": -1,
+          "y": 0,
+          "label": "root",
+          "color": "red"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "rt2",
+          "on": "ax1",
+          "x": 3,
+          "y": 0,
+          "label": "root",
+          "color": "red"
+        },
+        {
+          "op": "say",
+          "text": "The roots are x = {{root1(1,-2,-3)}} and x = {{root2(1,-2,-3)}}. The discriminant D = b^2 - 4ac = {{disc(1,-2,-3)}} is positive, so there are two real roots.",
+          "sync": "rt1"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "rq2",
+          "on": "ax1",
+          "expr": "x^2 - 4*x + 4",
+          "color": "green"
+        },
+        {
+          "op": "say",
+          "text": "Now look at y = x^2 - 4x + 4. D = {{disc(1,-4,4)}} — a discriminant of zero means exactly one root, where the parabola just touches the x-axis.",
+          "sync": "rq2"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "rt3",
+          "on": "ax1",
+          "x": 2,
+          "y": 0,
+          "label": "double root",
+          "color": "green"
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "rq3",
+          "on": "ax1",
+          "expr": "x^2 + 2",
+          "color": "orange",
+          "dash": true
+        },
+        {
+          "op": "say",
+          "text": "And y = x^2 + 2 has D = {{disc(1,0,2)}} — a negative discriminant. The parabola floats above the x-axis; there are no real roots.",
+          "sync": "rq3"
+        }
+      ],
+      "check": {
+        "text": "If a quadratic has discriminant D = 0, how many x-intercepts does its graph have?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Infinitely many"
+        ],
+        "answer": "1"
+      }
+    },
+    {
+      "title": "Factored Form",
+      "goal": "Connect roots to factored form y = a(x - r)(x - s) and show how to find roots by factoring.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Factored Form"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "ff1",
+          "on": "ax1",
+          "expr": "x^2 - x - 6",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "The quadratic y = x^2 - x - 6 can be rewritten as y = (x + 2)(x - 3). This is the factored form.",
+          "sync": "ff1"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "fr1",
+          "on": "ax1",
+          "x": -2,
+          "y": 0,
+          "label": "x = -2",
+          "color": "red"
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "fr2",
+          "on": "ax1",
+          "x": 3,
+          "y": 0,
+          "label": "x = 3",
+          "color": "red"
+        },
+        {
+          "op": "say",
+          "text": "Set each factor to zero: x + 2 = 0 gives x = {{root1(1,-1,-6)}}; x - 3 = 0 gives x = {{root2(1,-1,-6)}}. These roots are exactly where the graph crosses the x-axis.",
+          "sync": "fr1"
+        },
+        {
+          "op": "focus",
+          "ids": [
+            "fr1",
+            "fr2"
+          ],
+          "style": "pulse"
+        },
+        {
+          "op": "say",
+          "text": "The factored form y = a(x - r)(x - s) hands you the roots r and s immediately. The vertex sits halfway between them at x = {{vertexX(1,-1)}}."
+        },
+        {
+          "op": "add",
+          "c": "table",
+          "id": "tbf",
+          "cols": [
+            "Form",
+            "Example",
+            "What it reveals"
+          ],
+          "rows": [
+            [
+              "Standard",
+              "x^2 - x - 6",
+              "y-intercept and a, b, c"
+            ],
+            [
+              "Factored",
+              "(x + 2)(x - 3)",
+              "the roots directly"
+            ],
+            [
+              "Vertex",
+              "(x - 0.5)^2 - 6.25",
+              "the vertex (h, k)"
+            ]
+          ]
+        },
+        {
+          "op": "say",
+          "text": "Three forms, one function. Each reveals different features. Can you factor x^2 - 5x + 6 in your head?",
+          "sync": "tbf"
+        }
+      ]
+    },
+    {
+      "title": "Completing the Square",
+      "goal": "Derive vertex form by completing the square and read the vertex (h, k) directly.",
+      "skeleton": [
+        {
+          "op": "step",
+          "title": "Completing the Square"
+        },
+        {
+          "op": "clear",
+          "keep": [
+            "ax1"
+          ]
+        },
+        {
+          "op": "add",
+          "c": "plot",
+          "id": "cs1",
+          "on": "ax1",
+          "expr": "x^2 - 6*x + 4",
+          "color": "blue"
+        },
+        {
+          "op": "say",
+          "text": "Start with y = x^2 - 6x + 4. To find the vertex directly, we complete the square.",
+          "sync": "cs1"
+        },
+        {
+          "op": "say",
+          "text": "Take half of b = -6, which is {{-6/2}}. Square it: {{(-6/2)^2}}. Add and subtract that inside: y = (x^2 - 6x + {{(-6/2)^2}}) + 4 - {{(-6/2)^2}}."
+        },
+        {
+          "op": "say",
+          "text": "That first group is a perfect square, so this becomes y = (x - 3)^2 - 5, and the vertex is ({{vertexX(1,-6)}}, {{vertexY(1,-6,4)}})."
+        },
+        {
+          "op": "add",
+          "c": "point",
+          "id": "vcs",
+          "on": "ax1",
+          "x": 3,
+          "y": -5,
+          "label": "(3, -5)",
+          "color": "red"
+        },
+        {
+          "op": "focus",
+          "ids": [
+            "vcs"
+          ],
+          "style": "pulse"
+        },
+        {
+          "op": "say",
+          "text": "Vertex form y = a(x - h)^2 + k reveals the vertex (h, k) instantly. Here h = {{vertexX(1,-6)}} and k = {{vertexY(1,-6,4)}}.",
+          "sync": "vcs"
+        },
+        {
+          "op": "add",
+          "c": "label",
+          "id": "vfl",
+          "tex": "y = (x-3)^2 - 5",
+          "on": "ax1",
+          "x": 5,
+          "y": 5
+        },
+        {
+          "op": "say",
+          "text": "When a > 0, k is the minimum value; when a < 0, k is the maximum. This parabola opens up, so y = {{vertexY(1,-6,4)}} is its minimum.",
+          "sync": "vfl"
+        }
+      ],
+      "check": {
+        "text": "Complete the square for x^2 + 4x + 1. What is the vertex (h, k)?",
+        "answer": "({{vertexX(1,4)}}, {{vertexY(1,4,1)}})"
+      }
+    }
+  ]
+}
